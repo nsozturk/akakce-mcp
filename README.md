@@ -1,12 +1,12 @@
 # akakce-mcp
 
-[Akakçe](https://www.akakce.com) (Türkiye fiyat-karşılaştırma sitesi) için bir
-**MCP (Model Context Protocol) server**. LLM ajanlarının Akakçe'de ürün araması,
-fiyat karşılaştırması, satıcı listesi, kategori gezme ve fiyat geçmişi grafiği
-sorgulaması yapmasını sağlar.
+[Akakçe](https://www.akakce.com) (Türkiye fiyat-karşılaştırma sitesi) için kapsamlı
+bir **MCP (Model Context Protocol) server**. Hem public arama/fiyat API'sini hem de
+**giriş yapılmış hesap özelliklerini** (favoriler, fiyat alarmları, bildirimler)
+LLM ajanlarına açar.
 
-Akakçe'nin public JSON API'sini (`api6.akakce.com`) sarar — login/cookie/token
-gerektirmez.
+API yüzeyi `api6.akakce.com` mobil + web trafiğinden tersine çıkarıldı; tam dökümü:
+[`API_REFERENCE.md`](./API_REFERENCE.md).
 
 ## Kurulum
 
@@ -15,73 +15,104 @@ npm install
 npm run build
 ```
 
-> **Not:** Server isteklerini sistemdeki `curl` üzerinden atar. Akakçe'nin
-> `/product/*` uç noktaları ve ürün sayfaları Akamai bot korumasının arkasındadır
-> ve Node'un yerleşik `fetch` (undici) TLS/HTTP2 parmak izini 403 ile reddeder;
-> `curl` kabul edilir. `curl`'ün PATH'te olması gerekir (macOS/Linux'ta standart).
+> **`curl` gerekli.** Akakçe'nin bir kısmı (Akamai bot koruması) Node `fetch`'ini
+> 403'lüyor; server istekleri sistemdeki `curl` ile atar. `node` + `curl` PATH'te
+> olmalı (macOS/Linux'ta standart).
 
-## MCP istemcisine ekleme (Claude Code)
+## MCP istemcisine ekleme
 
+**Claude Code:**
 ```bash
 claude mcp add akakce -- node /Users/ns0bj/Development/Fun/1hittite/akakce-mcp/dist/index.js
 ```
 
-Geliştirme / manuel test:
-
-```bash
-npm run inspector   # MCP Inspector UI
+**OpenCode** (`~/.config/opencode/opencode.json` → `mcp` bloğu):
+```json
+"akakce": {
+  "type": "local",
+  "command": ["node", "/Users/ns0bj/Development/Fun/1hittite/akakce-mcp/dist/index.js"],
+  "enabled": true,
+  "environment": {
+    "AKAKCE_EMAIL": "{env:AKAKCE_EMAIL}",
+    "AKAKCE_PASSWORD": "{env:AKAKCE_PASSWORD}",
+    "FIREWORKS_API_KEY": "{env:FIREWORKS_API_KEY}"
+  }
+}
 ```
 
-## Tool'lar
+## Tool'lar (20)
 
-| Tool | Ne yapar | Başlıca girdi |
-|---|---|---|
-| `akakce_autocomplete` | Arama önerileri + ürün kodları | `query` |
-| `akakce_search` | Ürün arama (sayfalı, opsiyonel `ctCode`/`filterIds` ile filtreli) | `phrase`, `page?`, `ctCode?`, `filterIds?` |
-| `akakce_search_filters` | Bir aramaya ait filtre grupları + filtre id'leri | `phrase` |
-| `akakce_category_browse` | Kategori gezme + quickFilters | `ctCode`, `filterIds?`, `page?` |
-| `akakce_product_prices` | Ürün kod(lar)ı için en ucuz satıcılar (toplu, hızlı) | `codes: number[]` |
-| `akakce_product_detail` | Tam detay: özellikler, puan, fiyat özeti, **tüm satıcılar** (puan/teslimat/gidiş linki) | `code` (veya `url`) |
-| `akakce_price_history` | Fiyat geçmişi grafiği (PNG görsel URL'i) | `code` (veya `url`) |
-| `akakce_llm_enrich` | Sonuçları LLM ile yorumlar/özetler — **sadece Fire-Pass Kimi turbo** | `data`, `instruction` |
+### Keşif / gezinme (public)
+| Tool | Ne yapar |
+|---|---|
+| `akakce_autocomplete` | Arama önerileri + ürün kodları |
+| `akakce_search` | Ürün arama (sayfalı, `ctCode`/`filterIds` ile filtreli) |
+| `akakce_search_filters` | Bir aramaya ait filtre grupları + id'ler |
+| `akakce_category_browse` | Kategori gezme + quickFilters |
+| `akakce_home_feed` | Ana sayfa bileşenleri (kampanya/koleksiyon kartları) |
+| `akakce_deals` | Son yakalanan indirimler |
 
-### Tipik akış
+### Ürün / fiyat (public)
+| Tool | Ne yapar |
+|---|---|
+| `akakce_product_prices` | Ürün kod(lar)ı için en ucuz satıcılar (toplu) |
+| `akakce_quickview` | Tek ürün hızlı en-ucuz |
+| `akakce_product_detail` | Tam detay: özellikler + **tüm satıcılar** (puan/teslimat/gidiş linki) |
+| `akakce_price_history` | Fiyat geçmişi grafiği (PNG URL'i) |
 
-1. `akakce_autocomplete` veya `akakce_search` → ürün `code`'unu bul.
-2. `akakce_product_detail { code }` → özellikler + tüm satıcılar.
-3. (opsiyonel) `akakce_price_history { code }` → fiyat grafiği görseli.
-4. (opsiyonel) `akakce_llm_enrich` → sonuçları yorumlat.
+### Hesap (giriş gerektirir)
+| Tool | Ne yapar |
+|---|---|
+| `akakce_login` | Giriş yap, oturumu kaydet |
+| `akakce_logout` | Oturumu sil |
+| `akakce_account_info` | Profil bilgisi |
+| `akakce_favorites` | Favori listeleri / liste içeriği |
+| `akakce_favorite_add` | Favoriye ekle |
+| `akakce_favorite_remove` | Favoriden çıkar |
+| `akakce_price_alerts` | Fiyat alarmlarını listele |
+| `akakce_price_alert_set` | Fiyat alarmı kur/güncelle |
+| `akakce_notifications` | Fiyat düşüşü bildirimleri |
 
-## Fiyat geçmişi hakkında
+### LLM
+| Tool | Ne yapar |
+|---|---|
+| `akakce_llm_enrich` | Sonuçları yorumlar/özetler — **sadece Fire-Pass Kimi turbo** |
 
-Akakçe fiyat geçmişini sayısal veri olarak **sunmaz**; sadece sunucu tarafında
-render edilen bir PNG grafiği verir (`akakce-g.akamaized.net/{code}:{fiyat*100}:{sürüm}`).
-`akakce_price_history` bu grafiğin doğrudan görüntü URL'ini döndürür.
+## Giriş & oturum
+
+```bash
+export AKAKCE_EMAIL="..."
+export AKAKCE_PASSWORD="..."
+```
+
+- `akakce_login` (parametresiz) bu env'leri kullanır; ya da `email`/`password`
+  parametresi verilebilir.
+- Başarılı girişte oturum çerezi (`AAATLGST`) `~/.config/akakce-mcp/session.json`
+  içine **0600** izniyle yazılır. Çerez ~1 yıl geçerli (`rememberMe`), tekrar giriş
+  gerekmez. `akakce_logout` ile silinir.
+- Çerez/şifre repo'ya veya log'a yazılmaz.
+
+## Fiyat geçmişi
+
+Akakçe geçmişi sayısal vermez; yalnızca render edilmiş bir PNG grafiği sunar
+(`akakce-g.akamaized.net/{code}:{fiyat*100}:{sürüm}`). `akakce_price_history` bu
+görselin URL'ini döndürür.
 
 ## LLM zenginleştirme (Fire-Pass — maliyet-kritik)
 
-`akakce_llm_enrich`, **yalnızca** Fire-Pass guard'lı
-`accounts/fireworks/routers/kimi-k2p6-turbo` modeliyle çalışır
-(`src/llm/firepass.ts` — her çağrı öncesi slug hard-assert; başka model =
-`FirePassGuardError`). `FIREWORKS_API_KEY` ortam değişkeni tanımlı değilse tool
-devre dışıdır; diğer tüm tool'lar LLM olmadan tam çalışır.
-
-```bash
-export FIREWORKS_API_KEY=...   # sadece Fire-Pass turbo key'i
-```
-
-Detaylar: `/Users/ns0bj/.config/agent-rules/fire-pass-kimi-k2.6-turbo.md`
+`akakce_llm_enrich` **yalnızca** `accounts/fireworks/routers/kimi-k2p6-turbo` ile
+çalışır (`src/llm/firepass.ts` — her çağrı öncesi slug hard-assert). `FIREWORKS_API_KEY`
+yoksa devre dışıdır; diğer 19 tool tam çalışır. Detay:
+`/Users/ns0bj/.config/agent-rules/fire-pass-kimi-k2.6-turbo.md`
 
 ## Mimari
 
 ```
 src/
-  index.ts        # MCP server + tool kayıtları (stdio transport)
-  client.ts       # curl tabanlı HTTP katmanı (Akamai-uyumlu), retry/backoff
+  index.ts        # MCP server + 20 tool kaydı (stdio)
+  client.ts       # curl tabanlı HTTP: web/app UA, AAATLGST cookie, base64 decode, POST/DELETE, retry
+  session.ts      # oturum kalıcılığı (~/.config/akakce-mcp/session.json, 0600)
   types.ts        # api6 yanıt tipleri
-  tools/          # autocomplete, search, filters, category, prices, detail, history, enrich
+  tools/          # search, category, prices, history, home, account, enrich
   llm/firepass.ts # Fire-Pass guard + Fireworks chat
 ```
-
-Tüm istekler için kullanılan gerçek API uçları HAR yakalamasından
-(`www.akakce.com.har`) doğrulanmıştır.

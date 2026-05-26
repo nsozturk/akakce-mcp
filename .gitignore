@@ -9,3 +9,8 @@ tmp/
 storagedump_*/
 *.html
 *_files/
+*.folder/
+# captured credentials / sessions must never be committed
+session.json
+.env
+.env.*
