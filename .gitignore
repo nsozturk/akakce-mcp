@@ -1,0 +1,11 @@
+node_modules/
+dist/
+tmp/
+*.log
+.DS_Store
+# raw browser-capture artifacts (kept locally for reference, not shipped)
+*.har
+*.zip
+storagedump_*/
+*.html
+*_files/
