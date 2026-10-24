@@ -3,11 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/akakce-icon.png" alt="Akakçe Brand Icon" width="48" height="48" style="border-radius: 10px; vertical-align: middle;">
-</p>
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/akakce-mcp"><img src="https://img.shields.io/npm/v/akakce-mcp?color=cb3837&logo=npm" alt="npm version"></a>
+  <a href="https://github.com/nsozturk/akakce-mcp"><img src="https://img.shields.io/badge/version-1.0.0-cb3837?logo=npm" alt="version: 1.0.0"></a>
   <img src="https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white" alt="Node Floor">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/Bot%20Defense-Akamai%20Safe-10b981" alt="Bot Defense">

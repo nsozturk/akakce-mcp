@@ -46,7 +46,7 @@
   </g>
 
   <!-- Outer Border Frame -->
-  <rect x="1" y="1" width="1278" height="358" rx="16" fill="none" stroke="url(#border-grad) stroke-width="1.5"/>
+  <rect x="1" y="1" width="1278" height="358" rx="16" fill="none" stroke="url(#border-grad)" stroke-width="1.5"/>
 
   <!-- ================= LEFT COLUMN: HERO CONTENT ================= -->
   <!-- Chip: Category -->
