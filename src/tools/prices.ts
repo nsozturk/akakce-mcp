@@ -51,17 +51,28 @@ export const productPricesTool: ToolDef = {
     },
   },
   handler: async ({ codes }: { codes: number[] }) => {
-    const data = await apiGet<ApiEnvelope<QuickViewResult>>(
-      "/quickview/getall",
-      { prCodes: codes },
+    // /quickview/get with Promise.all handles single & batch codes reliably without 404
+    const results = await Promise.all(
+      codes.map(async (code) => {
+        try {
+          const d = await apiGet<ApiEnvelope<QuickViewResult>>("/quickview/get", { prCode: code });
+          const p = d.result?.products?.[0];
+          return {
+            code,
+            cheapest: p?.qvPrices?.[0] ? slimPrice(p.qvPrices[0]) : undefined,
+            sellers: (p?.qvPrices ?? []).map(slimPrice),
+          };
+        } catch {
+          return {
+            code,
+            cheapest: undefined,
+            sellers: [],
+          };
+        }
+      }),
     );
-    const products = data.result?.products ?? [];
     return {
-      products: products.map((p) => ({
-        code: p.prCode,
-        cheapest: p.qvPrices?.[0] ? slimPrice(p.qvPrices[0]) : undefined,
-        sellers: (p.qvPrices ?? []).map(slimPrice),
-      })),
+      products: results,
     };
   },
 };

@@ -3,13 +3,23 @@ dist/
 tmp/
 *.log
 .DS_Store
-# raw browser-capture artifacts (kept locally for reference, not shipped)
+.agent-history/
+
+# raw browser-capture artifacts & research (kept locally for reference, not shipped)
 *.har
 *.zip
 storagedump_*/
-*.html
+/*.html
 *_files/
 *.folder/
+research/
+developer-laptop-guide*.md
+yazilimci-laptoplari*.md
+
+# Keep documentation portal
+!docs/
+!docs/**
+
 # captured credentials / sessions must never be committed
 session.json
 .env

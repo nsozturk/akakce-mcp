@@ -1,12 +1,9 @@
 /**
- * Fire-Pass guarded Fireworks client (TS port of the curate_runner.py pattern).
+ * Fire-Pass guarded Fireworks client.
  *
- * COST-CRITICAL: only the Fire-Pass turbo router is covered by the subscription.
+ * COST-CRITICAL: only the Fire-Pass turbo router is covered by subscription plans.
  * Any other Fireworks model is billed per-token. We hard-assert the model slug
  * before every call and refuse to run on mismatch.
- *
- * Reference: /Users/ns0bj/.config/agent-rules/fire-pass-kimi-k2.6-turbo.md
- *            /Users/ns0bj/Development/Fun/cueline/pipeline/python/quote-extractor/lib/curate_runner.py
  */
 
 export const FIREWORKS_BASE = "https://api.fireworks.ai/inference/v1";

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>akakce-mcp — Model Context Protocol Server for Akakçe (akakce.com)</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Official documentation for akakce-mcp: Model Context Protocol (MCP) server for Akakçe (akakce.com). Features 20 tools, Akamai bot protection bypass, live multi-seller price comparison, and authenticated wishlist/price alert tracking.">
+  <meta name="keywords" content="akakce, mcp, model context protocol, price comparison, turkey ecommerce, claude code, cursor mcp, ai agent, web scraping, akamai bypass, typescript">
+  <meta name="author" content="Enes Öztürk (@nsozturk)">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nsozturk.github.io/akakce-mcp/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nsozturk.github.io/akakce-mcp/">
+  <meta property="og:title" content="akakce-mcp — Model Context Protocol Server for Akakçe">
+  <meta property="og:description" content="Live price comparison, multi-seller market intelligence, and automated price drop alerts for AI agents.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/nsozturk/akakce-mcp/main/assets/banner.png">
+  <meta property="og:site_name" content="akakce-mcp Documentation">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://nsozturk.github.io/akakce-mcp/">
+  <meta name="twitter:title" content="akakce-mcp — Turkish Price Comparison MCP Engine">
+  <meta name="twitter:description" content="20 tools for AI agents. Akamai bot protection bypassed via system curl. Zero API key floor.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/nsozturk/akakce-mcp/main/assets/banner.png">
+  <meta name="twitter:creator" content="@ns0bj">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "akakce-mcp",
+    "operatingSystem": "macOS, Linux, Windows",
+    "applicationCategory": "DeveloperApplication",
+    "description": "Model Context Protocol (MCP) server providing structured programmatic access to Akakçe price comparison engine.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Enes Öztürk",
+      "url": "https://github.com/nsozturk"
+    }
+  }
+  </script>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080c14;
+      --surface: #0f1624;
+      --surface-hover: #162034;
+      --card-border: #1f2c44;
+      --accent-orange: #ff6b35;
+      --accent-cyan: #00f2fe;
+      --accent-green: #10b981;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navbar */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(8, 12, 20, 0.85);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 0;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .logo-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--accent-orange);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #fff; }
+    .btn-github {
+      background: #1e293b;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-github:hover {
+      background: #334155;
+      border-color: #475569;
+    }
+
+    /* Hero */
+    header {
+      padding: 56px 0 40px;
+      text-align: center;
+    }
+    .banner-wrapper {
+      margin: 28px 0 36px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .banner-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .badge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    /* Command pill */
+    .hero-command {
+      display: inline-flex;
+      align-items: center;
+      background: #111a2d;
+      border: 1px solid #233454;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-family: var(--mono);
+      font-size: 14px;
+      gap: 12px;
+      color: #cbd5e1;
+      margin-bottom: 32px;
+    }
+    .hero-command .prompt { color: var(--accent-cyan); font-weight: 700; }
+    .hero-command button {
+      background: #1e2d4a;
+      border: 1px solid #364e78;
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .hero-command button:hover {
+      background: #25395e;
+      color: #fff;
+    }
+
+    /* Section */
+    section {
+      padding: 48px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .section-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 28px;
+      max-width: 720px;
+    }
+
+    /* Grid cards */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #32476d;
+    }
+    .card-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .card-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Code Blocks */
+    pre {
+      background: #090e18;
+      border: 1px solid #1a253a;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin: 14px 0;
+      line-height: 1.5;
+    }
+    code {
+      font-family: var(--mono);
+      font-size: 0.9em;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: var(--surface);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+    th, td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    th {
+      background: #131b2e;
+      color: #cbd5e1;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .tag-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .tag-public { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .tag-auth { background: rgba(255, 107, 53, 0.15); color: #ff8c42; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        akakce-mcp
+        <span class="logo-badge">v1.0.0</span>
+      </a>
+      <div class="nav-links">
+        <a href="#install" class="nav-link">Setup</a>
+        <a href="#auth" class="nav-link">Authentication</a>
+        <a href="#tools" class="nav-link">20 Tools</a>
+        <a href="https://github.com/nsozturk/akakce-mcp" target="_blank" class="btn-github">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header>
+    <div class="container">
+      <div class="badge-bar">
+        <img src="https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white" alt="Node Floor">
+        <img src="https://img.shields.io/badge/MCP-20%20Tools-00f2fe" alt="20 Tools">
+        <img src="https://img.shields.io/badge/Bot%20Defense-Akamai%20Safe-10b981" alt="Akamai Safe">
+        <img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License">
+        <img src="https://img.shields.io/badge/AI%20Agent-Native%20Ready-ff6b35" alt="Agent Ready">
+      </div>
+
+      <div class="banner-wrapper">
+        <img src="assets/banner.png" alt="akakce-mcp Banner" class="banner-img">
+      </div>
+
+      <div class="hero-command">
+        <span class="prompt">❯</span>
+        <span>claude mcp add akakce -- npx -y akakce-mcp</span>
+        <button onclick="navigator.clipboard.writeText('claude mcp add akakce -- npx -y akakce-mcp')">Copy</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Architecture Features -->
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title">Why akakce-mcp?</h2>
+      <p class="section-desc">Akakçe uses Akamai Bot Manager to block conventional programmatic requests. Here is how akakce-mcp delivers seamless, zero-ban price comparisons for AI agents.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <h3 class="card-title">Akamai Defense Bypass</h3>
+          <p class="card-body">Node <code>fetch</code> gets TLS-fingerprinted and returns 403 Forbidden. akakce-mcp channels requests via system <code>curl</code> with authentic iOS / Chrome headers to guarantee 100% request success.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title">Multi-Seller Comparisons</h3>
+          <p class="card-body">Retrieves all sellers on one screen: Amazon TR, Hepsiburada, Trendyol, PttAVM, idefix, Teknosa. Delivers prices, shipping costs, store ratings, and direct checkout outbound links.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🔔</div>
+          <h3 class="card-title">Wishlists &amp; Price Alerts</h3>
+          <p class="card-body">Manage favorite lists, trigger automatic price drop alerts when products fall below target thresholds, and query active notifications without opening a browser.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation -->
+  <section id="install">
+    <div class="container">
+      <h2 class="section-title">Quick Installation</h2>
+      <p class="section-desc">Connect akakce-mcp to your preferred AI coding assistant in seconds.</p>
+
+      <h3 style="margin: 20px 0 8px; font-size: 16px;">Claude Code</h3>
+      <pre><code>claude mcp add akakce -- npx -y akakce-mcp</code></pre>
+
+      <h3 style="margin: 20px 0 8px; font-size: 16px;">Cursor IDE</h3>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Add to <code>Settings &gt; Features &gt; MCP &gt; Add New MCP Server</code>:</p>
+      <pre><code>Name: akakce
+Type: command
+Command: npx -y akakce-mcp</code></pre>
+
+      <h3 style="margin: 20px 0 8px; font-size: 16px;">OpenCode (opencode.json)</h3>
+      <pre><code>"mcp": {
+  "akakce": {
+    "type": "local",
+    "command": ["npx", "-y", "akakce-mcp"],
+    "enabled": true
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- Authentication Guide -->
+  <section id="auth">
+    <div class="container">
+      <h2 class="section-title">Authentication &amp; Token Extraction Guide</h2>
+      <p class="section-desc">Public search, pricing, and category tools require <strong>zero credentials</strong>. For account features (favorites, price alerts), choose any of the three secure methods below:</p>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h3 class="card-title" style="color: var(--accent-orange);">Method 1: Interactive Terminal Login (Easiest)</h3>
+        <p class="card-body">Run the built-in authentication wizard. Your session cookie is stored locally at <code>~/.config/akakce-mcp/session.json</code> (chmod 0600) and is valid for ~1 year:</p>
+        <pre><code>npx akakce-mcp auth</code></pre>
+        <p class="card-body">Enter your Akakçe email and password. The token is fetched directly from <code>api6.akakce.com</code> without any intermediate servers.</p>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h3 class="card-title" style="color: var(--accent-cyan);">Method 2: Extract Cookie from Browser (DevTools)</h3>
+        <p class="card-body">If you log in via Google/Apple or prefer not to type your password:</p>
+        <ol style="margin-left: 20px; font-size: 14px; color: var(--text-muted); line-height: 1.8;">
+          <li>Log in to <a href="https://www.akakce.com" target="_blank" style="color: #38bdf8;">akakce.com</a> in your browser.</li>
+          <li>Open DevTools (<code>F12</code> or <code>Cmd+Opt+I</code>) &rarr; <strong>Application</strong> &rarr; <strong>Cookies</strong> &rarr; <code>https://www.akakce.com</code>.</li>
+          <li>Find the cookie named <code>AAATLGST</code> and copy its value.</li>
+          <li>Save it with one terminal command:</li>
+        </ol>
+        <pre><code>npx akakce-mcp set-cookie "AAATLGST=your_copied_value"</code></pre>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title" style="color: var(--accent-green);">Method 3: Environment Variable (CI/CD &amp; Docker)</h3>
+        <p class="card-body">Supply your cookie or login credentials directly in your environment:</p>
+        <pre><code># Option A: Direct Session Cookie
+export AKAKCE_COOKIE="AAATLGST=..."
+
+# Option B: Automated Login Credentials
+export AKAKCE_EMAIL="user@example.com"
+export AKAKCE_PASSWORD="your-password"</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 Tools Reference -->
+  <section id="tools">
+    <div class="container">
+      <h2 class="section-title">20 MCP Tools Reference</h2>
+      <p class="section-desc">Structured tool definitions available to LLMs through Model Context Protocol.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool Name</th>
+              <th>Access</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>akakce_search</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Search products with pagination, category filtering, and min prices.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_autocomplete</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Instant search suggestions and canonical product codes.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_product_detail</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Complete multi-seller list (prices, shipping, ratings, specs, store links).</td>
+            </tr>
+            <tr>
+              <td><code>akakce_product_prices</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Batched pricing lookup across multiple product codes.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_quickview</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Lightweight single-product seller and price summary.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_price_history</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Retrieves visual price trend history chart URL.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_search_filters</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Filter facets, brand filters, and price bounds for search terms.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_category_browse</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Traverse category tree and retrieve paginated category feeds.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_deals</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Real-time price drop feed (recently discounted items).</td>
+            </tr>
+            <tr>
+              <td><code>akakce_home_feed</code></td>
+              <td><span class="tag-badge tag-public">Public</span></td>
+              <td>Curated home screen cards, campaigns, and collections.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_login</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Authenticate with email/password and persist session.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_logout</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Clear local session cookie.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_account_info</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Retrieve logged-in user profile and notification counters.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_favorites</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>List user favorite folders or items inside a specific list.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_favorite_add</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Add one or more products to the default favorites wishlist.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_favorite_remove</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Remove a product from a specific favorite list.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_price_alerts</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>List active price alerts and historical drop targets.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_price_alert_set</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Arm a price drop alarm for a product at a target price.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_notifications</code></td>
+              <td><span class="tag-badge tag-auth">Auth</span></td>
+              <td>Stream unread price drop notifications.</td>
+            </tr>
+            <tr>
+              <td><code>akakce_llm_enrich</code></td>
+              <td><span class="tag-badge tag-public">Optional</span></td>
+              <td>Analyze, summarize, and compare Akakçe data with guarded LLMs.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>MIT License &bull; Built with &hearts; by <a href="https://github.com/nsozturk" target="_blank" style="color: var(--accent-orange); text-decoration: none; font-weight: 600;">Enes Öztürk</a></p>
+      <p style="margin-top: 6px; font-size: 12px; opacity: 0.7;">Akakçe is a registered trademark of Akakçe Bilgi Teknolojileri A.Ş. This project is an independent open-source tool.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

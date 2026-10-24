@@ -1,118 +1,186 @@
-# akakce-mcp
+<p align="center">
+  <img src="assets/banner.png" alt="akakce-mcp — Model Context Protocol Server for Akakçe" width="100%">
+</p>
 
-[Akakçe](https://www.akakce.com) (Türkiye fiyat-karşılaştırma sitesi) için kapsamlı
-bir **MCP (Model Context Protocol) server**. Hem public arama/fiyat API'sini hem de
-**giriş yapılmış hesap özelliklerini** (favoriler, fiyat alarmları, bildirimler)
-LLM ajanlarına açar.
+<p align="center">
+  <a href="https://www.npmjs.com/package/akakce-mcp"><img src="https://img.shields.io/npm/v/akakce-mcp?color=cb3837&logo=npm" alt="npm version"></a>
+  <img src="https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white" alt="Node Floor">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/Bot%20Defense-Akamai%20Safe-10b981" alt="Bot Defense">
+  <img src="https://img.shields.io/badge/MCP-20%20Tools-00f2fe" alt="20 Tools">
+  <a href="AGENTS.md"><img src="https://img.shields.io/badge/AI%20Agent-Native%20Ready-ff6b35" alt="Agent Ready"></a>
+  <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey" alt="Platform Support">
+</p>
 
-API yüzeyi `api6.akakce.com` mobil + web trafiğinden tersine çıkarıldı; tam dökümü:
-[`API_REFERENCE.md`](./API_REFERENCE.md).
+<p align="center">
+  <code>mcp</code> &bull; <code>model-context-protocol</code> &bull; <code>akakce</code> &bull; <code>price-comparison</code> &bull; <code>ecommerce</code> &bull; <code>claude-code</code> &bull; <code>cursor-agent</code> &bull; <code>turkey</code> &bull; <code>scraper</code> &bull; <code>typescript</code>
+</p>
 
-## Kurulum
+---
+
+**akakce-mcp** is a comprehensive [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for [Akakçe](https://www.akakce.com) — Turkey's leading price comparison platform.
+
+It equips AI coding assistants and autonomous agents (Claude Code, Cursor, OpenCode, Antigravity) with structured real-time search, multi-seller price comparisons (Amazon TR, Hepsiburada, Trendyol, PttAVM, idefix, Teknosa), category hierarchies, and authenticated user capabilities (favorites, price drop alerts, notification stream).
+
+📖 **Documentation Portal:** [https://nsozturk.github.io/akakce-mcp/](https://nsozturk.github.io/akakce-mcp/)
+
+---
+
+## Key Highlights
+
+- **🛡️ Akamai Bot Protection Bypassed:** Standard Node `fetch` / Axios clients are fingerprinted and blocked with `HTTP 403 Forbidden`. `akakce-mcp` routes requests through system `curl` using verified browser and mobile App headers (`Akakce/100 CFNetwork/...`), ensuring reliable zero-ban connectivity.
+- **⚡ 20 Structured MCP Tools:** Everything from query autocomplete and paginated filtered search to full seller price lists with shipping fees, seller ratings, and direct outbound links.
+- **🔑 Zero Key Floor for Public Features:** Search, seller comparison, deals, and category browsing work out-of-the-box with zero credentials required.
+- **🔒 Secure Token Management:** Account features (wishlists, price alerts) use isolated local session storage (`~/.config/akakce-mcp/session.json` with `0600` permissions) or environment variables. Zero credentials are ever saved in the repository.
+
+---
+
+## Quickstart
+
+Run directly without installing:
 
 ```bash
-npm install
-npm run build
+# Start MCP server (stdio transport)
+npx -y akakce-mcp
 ```
 
-> **`curl` gerekli.** Akakçe'nin bir kısmı (Akamai bot koruması) Node `fetch`'ini
-> 403'lüyor; server istekleri sistemdeki `curl` ile atar. `node` + `curl` PATH'te
-> olmalı (macOS/Linux'ta standart).
+Or install globally:
 
-## MCP istemcisine ekleme
-
-**Claude Code:**
 ```bash
-claude mcp add akakce -- node /Users/ns0bj/Development/Fun/1hittite/akakce-mcp/dist/index.js
+npm install -g akakce-mcp
 ```
 
-**OpenCode** (`~/.config/opencode/opencode.json` → `mcp` bloğu):
+> **Requirement:** System `curl` must be available in your PATH (standard on macOS, Linux, and modern Windows 10/11).
+
+---
+
+## Client Integration
+
+### 1. Claude Code
+```bash
+claude mcp add akakce -- npx -y akakce-mcp
+```
+
+### 2. Cursor IDE
+Open `Settings` &rarr; `Features` &rarr; `MCP` &rarr; `Add New MCP Server`:
+- **Name:** `akakce`
+- **Type:** `command`
+- **Command:** `npx -y akakce-mcp`
+
+### 3. OpenCode (`opencode.json`)
 ```json
-"akakce": {
-  "type": "local",
-  "command": ["node", "/Users/ns0bj/Development/Fun/1hittite/akakce-mcp/dist/index.js"],
-  "enabled": true,
-  "environment": {
-    "AKAKCE_EMAIL": "{env:AKAKCE_EMAIL}",
-    "AKAKCE_PASSWORD": "{env:AKAKCE_PASSWORD}",
-    "FIREWORKS_API_KEY": "{env:FIREWORKS_API_KEY}"
+{
+  "mcp": {
+    "akakce": {
+      "type": "local",
+      "command": ["npx", "-y", "akakce-mcp"],
+      "enabled": true
+    }
   }
 }
 ```
 
-## Tool'lar (20)
+---
 
-### Keşif / gezinme (public)
-| Tool | Ne yapar |
-|---|---|
-| `akakce_autocomplete` | Arama önerileri + ürün kodları |
-| `akakce_search` | Ürün arama (sayfalı, `ctCode`/`filterIds` ile filtreli) |
-| `akakce_search_filters` | Bir aramaya ait filtre grupları + id'ler |
-| `akakce_category_browse` | Kategori gezme + quickFilters |
-| `akakce_home_feed` | Ana sayfa bileşenleri (kampanya/koleksiyon kartları) |
-| `akakce_deals` | Son yakalanan indirimler |
+## Authentication & Token Extraction Guide
 
-### Ürün / fiyat (public)
-| Tool | Ne yapar |
-|---|---|
-| `akakce_product_prices` | Ürün kod(lar)ı için en ucuz satıcılar (toplu) |
-| `akakce_quickview` | Tek ürün hızlı en-ucuz |
-| `akakce_product_detail` | Tam detay: özellikler + **tüm satıcılar** (puan/teslimat/gidiş linki) |
-| `akakce_price_history` | Fiyat geçmişi grafiği (PNG URL'i) |
+Public search and price comparison work with **zero configuration**.
 
-### Hesap (giriş gerektirir)
-| Tool | Ne yapar |
-|---|---|
-| `akakce_login` | Giriş yap, oturumu kaydet |
-| `akakce_logout` | Oturumu sil |
-| `akakce_account_info` | Profil bilgisi |
-| `akakce_favorites` | Favori listeleri / liste içeriği |
-| `akakce_favorite_add` | Favoriye ekle |
-| `akakce_favorite_remove` | Favoriden çıkar |
-| `akakce_price_alerts` | Fiyat alarmlarını listele |
-| `akakce_price_alert_set` | Fiyat alarmı kur/güncelle |
-| `akakce_notifications` | Fiyat düşüşü bildirimleri |
+To enable authenticated features (managing favorite lists, creating target price drop alerts, reading notifications), you need your Akakçe account token (`AAATLGST` cookie). Choose whichever method suits you best:
 
-### LLM
-| Tool | Ne yapar |
-|---|---|
-| `akakce_llm_enrich` | Sonuçları yorumlar/özetler — **sadece Fire-Pass Kimi turbo** |
-
-## Giriş & oturum
-
+### Method 1: Interactive Terminal Login (Recommended)
+Run the built-in authentication command:
 ```bash
-export AKAKCE_EMAIL="..."
-export AKAKCE_PASSWORD="..."
+npx akakce-mcp auth
+```
+This prompts for your Akakçe email and password, executes a secure login against `api6.akakce.com`, and stores your session cookie at `~/.config/akakce-mcp/session.json` (`chmod 0600`).
+The session is valid for **~1 year** (`rememberMe: true`).
+
+### Method 2: Extract Cookie from Browser (DevTools)
+If you log in via Google, Apple ID, or prefer not to input your password in the terminal:
+1. Log in to [akakce.com](https://www.akakce.com) in your browser.
+2. Open Developer Tools (`F12` or `Cmd+Opt+I`) &rarr; **Application** tab &rarr; **Cookies** &rarr; `https://www.akakce.com`.
+3. Locate the cookie named **`AAATLGST`** and copy its value.
+4. Save it using the CLI:
+   ```bash
+   npx akakce-mcp set-cookie "AAATLGST=<your_copied_value>"
+   ```
+
+### Method 3: Environment Variables (Docker & CI/CD)
+You can provide the session cookie directly via environment variables:
+```bash
+export AKAKCE_COOKIE="AAATLGST=..."
+```
+Or provide automated credentials:
+```bash
+export AKAKCE_EMAIL="user@example.com"
+export AKAKCE_PASSWORD="your_password"
 ```
 
-- `akakce_login` (parametresiz) bu env'leri kullanır; ya da `email`/`password`
-  parametresi verilebilir.
-- Başarılı girişte oturum çerezi (`AAATLGST`) `~/.config/akakce-mcp/session.json`
-  içine **0600** izniyle yazılır. Çerez ~1 yıl geçerli (`rememberMe`), tekrar giriş
-  gerekmez. `akakce_logout` ile silinir.
-- Çerez/şifre repo'ya veya log'a yazılmaz.
-
-## Fiyat geçmişi
-
-Akakçe geçmişi sayısal vermez; yalnızca render edilmiş bir PNG grafiği sunar
-(`akakce-g.akamaized.net/{code}:{fiyat*100}:{sürüm}`). `akakce_price_history` bu
-görselin URL'ini döndürür.
-
-## LLM zenginleştirme (Fire-Pass — maliyet-kritik)
-
-`akakce_llm_enrich` **yalnızca** `accounts/fireworks/routers/kimi-k2p6-turbo` ile
-çalışır (`src/llm/firepass.ts` — her çağrı öncesi slug hard-assert). `FIREWORKS_API_KEY`
-yoksa devre dışıdır; diğer 19 tool tam çalışır. Detay:
-`/Users/ns0bj/.config/agent-rules/fire-pass-kimi-k2.6-turbo.md`
-
-## Mimari
-
+### Check Authentication Status
+```bash
+npx akakce-mcp status
+# or
+npx akakce-mcp whoami
 ```
-src/
-  index.ts        # MCP server + 20 tool kaydı (stdio)
-  client.ts       # curl tabanlı HTTP: web/app UA, AAATLGST cookie, base64 decode, POST/DELETE, retry
-  session.ts      # oturum kalıcılığı (~/.config/akakce-mcp/session.json, 0600)
-  types.ts        # api6 yanıt tipleri
-  tools/          # search, category, prices, history, home, account, enrich
-  llm/firepass.ts # Fire-Pass guard + Fireworks chat
+
+### Clear Saved Session
+```bash
+npx akakce-mcp logout
 ```
+
+---
+
+## Tool Directory (20 Tools)
+
+### Discovery & Search (Public)
+| Tool | Description |
+|---|---|
+| `akakce_autocomplete` | Instant search suggestions and canonical product codes |
+| `akakce_search` | Paginated product search with sorting and category filters |
+| `akakce_search_filters` | Available filter groups (brands, specs, price range) for a query |
+| `akakce_category_browse` | Category tree hierarchy and paginated category feeds |
+| `akakce_home_feed` | Home screen cards, campaigns, and active collections |
+| `akakce_deals` | Real-time stream of recently discounted items |
+
+### Pricing & Market Intelligence (Public)
+| Tool | Description |
+|---|---|
+| `akakce_product_detail` | Complete seller list (prices, shipping, ratings, specs, store links) |
+| `akakce_product_prices` | Batched pricing lookup across multiple product codes |
+| `akakce_quickview` | Rapid single-product price and seller summary |
+| `akakce_price_history` | Price trend chart image URL |
+
+### Account & Wishlists (Requires Auth)
+| Tool | Description |
+|---|---|
+| `akakce_login` | Authenticate and persist session cookie |
+| `akakce_logout` | Clear saved session credentials |
+| `akakce_account_info` | Current user profile, location, and notification counters |
+| `akakce_favorites` | List favorite folders or items inside a list |
+| `akakce_favorite_add` | Add product(s) to default favorite list |
+| `akakce_favorite_remove` | Remove a product from a favorite list |
+| `akakce_price_alerts` | List active price drop monitors |
+| `akakce_price_alert_set` | Arm a price alert at a target price in TRY |
+| `akakce_notifications` | Fetch unread price drop notification stream |
+
+### Optional LLM Enrichment
+| Tool | Description |
+|---|---|
+| `akakce_llm_enrich` | Summarize, normalize, or compare Akakçe data with Fire-Pass Kimi Turbo (requires `FIREWORKS_API_KEY`) |
+
+---
+
+## Agent Integration Specs
+
+- **Agent Contract:** See [`AGENTS.md`](./AGENTS.md) for execution protocols and failure recovery guidelines.
+- **Copy-Paste Agent Rule:** See [`GLOBAL_AGENT_RULE.md`](./GLOBAL_AGENT_RULE.md) to add `akakce-mcp` to your AI assistant's system instructions.
+- **API Reference:** Detailed endpoint map reverse-engineered from mobile and web traffic is documented in [`API_REFERENCE.md`](./API_REFERENCE.md).
+
+---
+
+## License
+
+MIT &copy; [Enes Öztürk](https://github.com/nsozturk).
+
+*Disclaimer: Akakçe is a registered trademark of Akakçe Bilgi Teknolojileri A.Ş. This project is an independent open-source tool and is not affiliated with or endorsed by Akakçe.*
