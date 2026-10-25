@@ -1,0 +1,84 @@
+# akakce-mcp
+
+> akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.
+
+## Overview
+
+akakce-mcp gives AI agents (such as Claude Code, Cursor, Codex, OpenCode, and Antigravity) structured programmatic access to Akakçe (akakce.com), Turkey's premier retail price comparison engine. It handles product discovery, multi-seller price checks (Amazon TR, Hepsiburada, Trendyol, PttAVM, idefix, Teknosa), price drop tracking, and authenticated user account actions (favorites, target price alerts, and notifications).
+
+The server bypasses Akamai Bot Protection on `api6.akakce.com` by tunneling requests through the system `curl` binary with verified mobile and browser headers, eliminating TLS fingerprint blocks (`HTTP 403 Forbidden`).
+
+## Installation & Quickstart
+
+Run via npx without installation:
+```bash
+npx -y akakce-mcp
+```
+
+Add to Claude Code:
+```bash
+claude mcp add akakce -- npx -y akakce-mcp
+```
+
+Add to Cursor IDE (`Settings > Features > MCP > Add New MCP Server`):
+- Name: akakce
+- Type: command
+- Command: `npx -y akakce-mcp`
+
+## Core Capabilities (20 Tools)
+
+### Public Tools (Zero Credentials Required)
+- `akakce_search`: Paginated search with category, brand, and sorting filters.
+- `akakce_autocomplete`: Instant search suggestions and numeric product codes.
+- `akakce_product_detail`: Full seller listings, prices, shipping costs, store ratings, specs, and direct checkout redirect URLs.
+- `akakce_product_prices`: Batched pricing lookup across multiple product codes.
+- `akakce_quickview`: Lightweight single-product seller and price check.
+- `akakce_price_history`: Price trend history graph URL.
+- `akakce_search_filters`: Available filter facets, brands, and price bounds for a query.
+- `akakce_category_browse`: Category tree hierarchy and paginated feeds.
+- `akakce_deals`: Real-time feed of recently discounted items.
+- `akakce_home_feed`: Featured campaigns, collections, and deals from home screen.
+
+### Authenticated Tools (Requires AAATLGST Session Cookie)
+- `akakce_login`: Authenticate and persist session cookie.
+- `akakce_logout`: Clear saved session credentials.
+- `akakce_account_info`: Current user profile and notification counters.
+- `akakce_favorites`: List user favorite folders and items.
+- `akakce_favorite_add`: Add product(s) to default favorite list.
+- `akakce_favorite_remove`: Remove a product from a favorite list.
+- `akakce_price_alerts`: List active price drop monitors.
+- `akakce_price_alert_set`: Arm price alert at a specified target price in TRY.
+- `akakce_notifications`: Stream unread price drop notifications.
+
+### Optional LLM Enrichment
+- `akakce_llm_enrich`: Analyze and compare Akakçe data with Fire-Pass Kimi Turbo (requires FIREWORKS_API_KEY).
+
+## Authentication & Token Extraction
+
+Public tools require zero configuration. For account tools:
+
+1. Interactive Terminal Login:
+   ```bash
+   npx akakce-mcp auth
+   ```
+   Prompts for Akakçe email and password; saves session to `~/.config/akakce-mcp/session.json` (chmod 0600).
+
+2. Browser DevTools Extraction:
+   Log in to akakce.com, inspect DevTools > Application > Cookies > `AAATLGST`, and store:
+   ```bash
+   npx akakce-mcp set-cookie "AAATLGST=<value>"
+   ```
+
+3. Environment Variable:
+   ```bash
+   export AKAKCE_COOKIE="AAATLGST=..."
+   ```
+
+## Documentation & Links
+
+- Documentation Portal: https://nsozturk.github.io/akakce-mcp/
+- Repository: https://github.com/nsozturk/akakce-mcp
+- Agent Execution Contract: https://github.com/nsozturk/akakce-mcp/blob/main/AGENTS.md
+- Global Agent Rule: https://github.com/nsozturk/akakce-mcp/blob/main/GLOBAL_AGENT_RULE.md
+- Full API Reference: https://github.com/nsozturk/akakce-mcp/blob/main/API_REFERENCE.md
+- Full LLM Context: https://nsozturk.github.io/akakce-mcp/llms-full.txt

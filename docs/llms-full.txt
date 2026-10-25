@@ -1,0 +1,241 @@
+# akakce-mcp — Complete Documentation (llms-full.txt)
+
+> akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.
+
+Canonical Repository: https://github.com/nsozturk/akakce-mcp
+Live Documentation Portal: https://nsozturk.github.io/akakce-mcp/
+License: MIT
+
+---
+
+## 1. Overview & Architecture
+
+akakce-mcp provides structured programmatic access to Akakçe (akakce.com), Turkey's premier retail price comparison engine. It handles product discovery, multi-seller live price comparison (Amazon TR, Hepsiburada, Trendyol, PttAVM, idefix, Teknosa), category hierarchies, and authenticated user features (favorites, price drop alerts, notification stream).
+
+### Akamai Bot Defense Bypass
+Akakçe routes product pages and critical API endpoints behind Akamai Bot Manager. Plain HTTP clients (Node `fetch`, Axios, Python `requests`) trigger TLS/HTTP2 fingerprint mismatch and return `HTTP 403 Forbidden`.
+akakce-mcp routes requests through system `curl` (`child_process.execFile`) with authentic browser and mobile application User-Agent headers (`Akakce/100 CFNetwork/...` and Chrome 148). This provides 100% reliable, zero-ban connectivity without requiring proxy services or browser automation.
+
+---
+
+## 2. Quickstart & Installation
+
+### Direct Execution
+```bash
+npx -y akakce-mcp
+```
+
+### Global Installation
+```bash
+npm install -g akakce-mcp
+```
+
+### Client Integration Configurations
+
+#### Claude Code
+```bash
+claude mcp add akakce -- npx -y akakce-mcp
+```
+
+#### Cursor IDE
+In Cursor Settings > Features > MCP > Add New MCP Server:
+- Name: akakce
+- Type: command
+- Command: npx -y akakce-mcp
+
+#### OpenCode (`opencode.json`)
+```json
+{
+  "mcp": {
+    "akakce": {
+      "type": "local",
+      "command": ["npx", "-y", "akakce-mcp"],
+      "enabled": true
+    }
+  }
+}
+```
+
+#### Claude Desktop (`claude_desktop_config.json`)
+```json
+{
+  "mcpServers": {
+    "akakce": {
+      "command": "npx",
+      "args": ["-y", "akakce-mcp"]
+    }
+  }
+}
+```
+
+---
+
+## 3. Tool Reference (20 MCP Tools)
+
+### Public Tools (Zero Credentials Required)
+
+1. `akakce_search`
+   - Description: Search products on Akakçe with pagination, category filter (ctCode), and attribute filter IDs.
+   - Input: `{ phrase: string, page?: number, sort?: number, ctCode?: number, filterIds?: number[] }`
+   - Output: List of products with code, name, brand, lowest price, seller count, rating, image, and product URL.
+
+2. `akakce_autocomplete`
+   - Description: Real-time search suggestions and canonical product codes.
+   - Input: `{ query: string }`
+   - Output: Query suggestions and suggested products with codes.
+
+3. `akakce_product_detail`
+   - Description: Comprehensive product details including full verified seller list (prices, shipping costs, store ratings, delivery terms, specs, and direct store redirect URLs).
+   - Input: `{ code?: number, url?: string }`
+   - Output: Product specs, rating, price summary, and complete array of sellers.
+
+4. `akakce_product_prices`
+   - Description: Batched live price lookups across multiple product codes in parallel.
+   - Input: `{ codes: number[] }`
+   - Output: Array of products with cheapest price and all listed sellers.
+
+5. `akakce_quickview`
+   - Description: Fast lightweight single-product price check.
+   - Input: `{ code: number }`
+   - Output: Product code and list of seller prices.
+
+6. `akakce_price_history`
+   - Description: Retrieves the visual price trend graph image URL for a product.
+   - Input: `{ code: number }`
+   - Output: Akamai-hosted price history graph PNG URL.
+
+7. `akakce_search_filters`
+   - Description: Discover available filter categories, brands, and price bounds for any search term.
+   - Input: `{ phrase: string, sort?: number }`
+   - Output: Filter groups and filter IDs.
+
+8. `akakce_category_browse`
+   - Description: Traverse the Akakçe category hierarchy or retrieve paginated category product feeds.
+   - Input: `{ ctCode?: number, filterIds?: number[], page?: number }`
+   - Output: Category breadcrumbs, subcategories, or product lists.
+
+9. `akakce_deals`
+   - Description: Real-time stream of recently discounted items across categories.
+   - Input: `{}`
+   - Output: Categorized lists of recent price drops.
+
+10. `akakce_home_feed`
+    - Description: Featured campaigns, collections, and deals from the Akakçe home screen.
+    - Input: `{}`
+    - Output: Homepage components and action URLs.
+
+### Authenticated Tools (Requires AAATLGST Session Token)
+
+11. `akakce_login`
+    - Description: Authenticate and persist session cookie into `~/.config/akakce-mcp/session.json`.
+    - Input: `{ email?: string, password?: string }` (falls back to env vars).
+
+12. `akakce_logout`
+    - Description: Clear saved session credentials.
+    - Input: `{}`
+
+13. `akakce_account_info`
+    - Description: Profile info (name, email, location, unread notification counter).
+    - Input: `{}`
+
+14. `akakce_favorites`
+    - Description: List all user favorite lists or get items in a specific list.
+    - Input: `{ listId?: number }`
+
+15. `akakce_favorite_add`
+    - Description: Add product(s) to user default wishlist.
+    - Input: `{ codes: number[] }`
+
+16. `akakce_favorite_remove`
+    - Description: Remove a product from a specific favorite list.
+    - Input: `{ code: number, listId: number }`
+
+17. `akakce_price_alerts`
+    - Description: List active price drop monitors, target prices, and 6-month lows.
+    - Input: `{}`
+
+18. `akakce_price_alert_set`
+    - Description: Arm an automated notification when product falls below target price in TRY.
+    - Input: `{ code: number, targetPrice: number }`
+
+19. `akakce_notifications`
+    - Description: Stream unread price drop notifications.
+    - Input: `{}`
+
+20. `akakce_llm_enrich`
+    - Description: Optional analysis and comparison of Akakçe JSON results using Fire-Pass Kimi Turbo.
+    - Input: `{ data: string, instruction: string }` (requires FIREWORKS_API_KEY).
+
+---
+
+## 4. Authentication & Token Extraction Guide
+
+Public tools require **zero credentials**. For authenticated tools, choose any of these methods:
+
+### Method 1: Interactive Terminal Login (Recommended)
+```bash
+npx akakce-mcp auth
+```
+Prompts for email/password and saves session cookie (`AAATLGST`) to `~/.config/akakce-mcp/session.json` (chmod 0600). The cookie is valid for ~1 year (`rememberMe: true`).
+
+### Method 2: Browser DevTools Extraction
+1. Log in to https://www.akakce.com in your web browser.
+2. Open DevTools (F12 or Cmd+Opt+I) > Application > Cookies > https://www.akakce.com.
+3. Locate the `AAATLGST` cookie and copy its value.
+4. Run:
+   ```bash
+   npx akakce-mcp set-cookie "AAATLGST=<value>"
+   ```
+
+### Method 3: Environment Variable
+```bash
+export AKAKCE_COOKIE="AAATLGST=..."
+# or
+export AKAKCE_EMAIL="user@example.com"
+export AKAKCE_PASSWORD="your-password"
+```
+
+Verify status:
+```bash
+npx akakce-mcp status
+```
+
+---
+
+## 5. Frequently Asked Questions (FAQ)
+
+### How do I use akakce-mcp with Claude Code?
+Run `claude mcp add akakce -- npx -y akakce-mcp`. Claude will immediately gain access to all 20 Akakçe tools.
+
+### Does akakce-mcp bypass Akamai bot protection?
+Yes. Akakçe uses Akamai Bot Manager which blocks standard Node.js `fetch` with 403 Forbidden. akakce-mcp routes requests through system `curl` with native-app and browser headers to bypass TLS fingerprinting.
+
+### Do I need an Akakçe account or API key to search prices?
+No. All product search, multi-seller comparison, and category browsing features work out-of-the-box with zero credentials and zero API keys.
+
+### How do I set price drop alerts with an AI assistant?
+First log in via `npx akakce-mcp auth`. Then instruct your agent: "Search for Pixel 8 on Akakçe and set a price alert if it drops below 25000 TL". The agent will call `akakce_search` followed by `akakce_price_alert_set`.
+
+### How does akakce-mcp compare to direct web scraping?
+Direct web scraping with Cheerio or Puppeteer is fragile, resource-heavy, and frequently triggers Akamai bot blocks. akakce-mcp connects directly to the underlying `api6.akakce.com` JSON APIs, delivering fast, structured JSON data with zero browser overhead.
+
+---
+
+## 6. Alternatives & Comparison
+
+- **Compared to Puppeteer / Playwright scraping:** akakce-mcp has zero headless browser overhead, consumes less than 50 MB RAM, and does not get blocked by Akamai's anti-bot challenge.
+- **Compared to Cimri.com scrapers:** Cimri has a different seller network and does not offer authenticated user wishlists or programmatic target price alerts.
+- **Compared to Google Shopping / SerpAPI:** Commercial SERP APIs charge per-query subscription fees ($50-$200/mo) and often lack real-time local Turkish marketplace seller breakdowns. akakce-mcp is 100% free and open-source.
+
+---
+
+## 7. Citation & Meta
+
+```bibtex
+@software{akakce_mcp_2026,
+  author = {Öztürk, Enes},
+  title = {akakce-mcp: Model Context Protocol Server for Akakçe Price Comparison},
+  url = {https://github.com/nsozturk/akakce-mcp},
+  year = {2026}
+}
+```

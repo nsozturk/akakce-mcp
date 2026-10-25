@@ -8,8 +8,8 @@
   <!-- SEO Meta Tags -->
   <link rel="icon" type="image/png" href="akakce-icon.png">
   <link rel="apple-touch-icon" href="akakce-icon.png">
-  <meta name="description" content="Official documentation for akakce-mcp: Model Context Protocol (MCP) server for Akakçe (akakce.com). Features 20 tools, Akamai bot protection bypass, live multi-seller price comparison, and authenticated wishlist/price alert tracking.">
-  <meta name="keywords" content="akakce, mcp, model context protocol, price comparison, turkey ecommerce, claude code, cursor mcp, ai agent, web scraping, akamai bypass, typescript">
+  <meta name="description" content="akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.">
+  <meta name="keywords" content="akakce, akakce-mcp, akakce-api, model-context-protocol, mcp, price-comparison, price-comparison-api, turkey-price-tracker, claude-mcp-ecommerce, cimri-alternative, claude code, cursor mcp, ai agent, web scraping, akamai bypass, typescript">
   <meta name="author" content="Enes Öztürk (@nsozturk)">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://nsozturk.github.io/akakce-mcp/">
@@ -17,8 +17,8 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://nsozturk.github.io/akakce-mcp/">
-  <meta property="og:title" content="akakce-mcp — Model Context Protocol Server for Akakçe">
-  <meta property="og:description" content="Live price comparison, multi-seller market intelligence, and automated price drop alerts for AI agents.">
+  <meta property="og:title" content="akakce-mcp — Turkish Price Comparison MCP Server">
+  <meta property="og:description" content="akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.">
   <meta property="og:image" content="https://raw.githubusercontent.com/nsozturk/akakce-mcp/main/assets/banner.png">
   <meta property="og:site_name" content="akakce-mcp Documentation">
 
@@ -26,30 +26,81 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://nsozturk.github.io/akakce-mcp/">
   <meta name="twitter:title" content="akakce-mcp — Turkish Price Comparison MCP Engine">
-  <meta name="twitter:description" content="20 tools for AI agents. Akamai bot protection bypassed via system curl. Zero API key floor.">
+  <meta name="twitter:description" content="akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/nsozturk/akakce-mcp/main/assets/banner.png">
   <meta name="twitter:creator" content="@ns0bj">
 
-  <!-- Schema.org JSON-LD -->
+  <!-- Schema.org JSON-LD (SoftwareApplication + FAQPage) -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "akakce-mcp",
-    "operatingSystem": "macOS, Linux, Windows",
-    "applicationCategory": "DeveloperApplication",
-    "description": "Model Context Protocol (MCP) server providing structured programmatic access to Akakçe price comparison engine.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "akakce-mcp",
+      "operatingSystem": "macOS, Linux, Windows",
+      "applicationCategory": "DeveloperApplication",
+      "description": "akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.",
+      "license": "https://opensource.org/licenses/MIT",
+      "codeRepository": "https://github.com/nsozturk/akakce-mcp",
+      "downloadUrl": "https://www.npmjs.com/package/akakce-mcp",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Enes Öztürk",
+        "url": "https://github.com/nsozturk"
+      }
     },
-    "author": {
-      "@type": "Person",
-      "name": "Enes Öztürk",
-      "url": "https://github.com/nsozturk"
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I use akakce-mcp with Claude Code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Run 'claude mcp add akakce -- npx -y akakce-mcp'. Claude Code will automatically register all 20 tools and connect via stdio transport."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does akakce-mcp bypass Akamai bot protection?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Akakçe blocks standard Node.js fetch with HTTP 403 Forbidden. akakce-mcp routes requests through system curl with authentic browser and mobile headers to bypass TLS fingerprinting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need an Akakçe account or API key to search prices?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. All product search, multi-seller comparison, and category browsing features work out-of-the-box with zero credentials and zero API keys."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I extract my session token for price alerts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can use the interactive terminal login via 'npx akakce-mcp auth', extract the AAATLGST cookie from browser DevTools via 'npx akakce-mcp set-cookie', or set the AKAKCE_COOKIE environment variable."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does akakce-mcp compare to direct web scraping or Cimri?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Unlike direct web scraping with Puppeteer or Cheerio, akakce-mcp connects directly to the underlying api6.akakce.com JSON endpoints without browser overhead or bot blocks, and provides full multi-seller price comparisons with direct store redirect links."
+          }
+        }
+      ]
     }
-  }
+  ]
   </script>
 
   <!-- Typography -->
@@ -350,6 +401,9 @@
         <a href="#install" class="nav-link">Setup</a>
         <a href="#auth" class="nav-link">Authentication</a>
         <a href="#tools" class="nav-link">20 Tools</a>
+        <a href="#comparison" class="nav-link">Alternatives</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="llms.txt" target="_blank" class="nav-link" style="color: var(--accent-cyan); font-family: var(--mono); font-size: 13px;">llms.txt</a>
         <a href="https://github.com/nsozturk/akakce-mcp" target="_blank" class="btn-github">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
@@ -597,6 +651,66 @@ export AKAKCE_PASSWORD="your-password"</code></pre>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alternatives & Comparison -->
+  <section id="comparison">
+    <div class="container">
+      <h2 class="section-title">Alternatives &amp; Comparison</h2>
+      <p class="section-desc">How akakce-mcp compares to other Turkish ecommerce data collection methods and tools.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 class="card-title" style="color: var(--accent-orange);">vs. Direct Puppeteer / Scraper</h3>
+          <p class="card-body">Traditional scraping with Cheerio or headless Chrome is slow (2-5s per request), memory intensive (>300 MB), and immediately triggers Akamai's anti-bot JS challenges (HTTP 403). akakce-mcp connects directly to the underlying JSON API via system curl in ~150ms.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="color: var(--accent-cyan);">vs. Cimri.com Scrapers</h3>
+          <p class="card-body">Cimri lacks programmatic user wishlist manipulation, notification counters, and persistent price drop alarms. akakce-mcp covers both public search and authenticated private actions (favorites, target price alerts).</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="color: var(--accent-green);">vs. Google Shopping / SerpAPI</h3>
+          <p class="card-body">Commercial SERP APIs charge steep monthly subscription fees ($50-$200/mo) and often return delayed or incomplete merchant listings for Turkish regional sellers. akakce-mcp is 100% free, open-source, and retrieves real-time pricing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-desc">Answers to common questions about running akakce-mcp with Claude Code, Cursor, and AI agents.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card">
+          <h3 class="card-title">How do I use akakce-mcp with Claude Code?</h3>
+          <p class="card-body">Run <code>claude mcp add akakce -- npx -y akakce-mcp</code>. Claude Code will automatically register all 20 tools and connect via the standard stdio protocol.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Does akakce-mcp bypass Akamai bot protection?</h3>
+          <p class="card-body">Yes. Akakçe uses Akamai Bot Manager which blocks standard Node.js fetch with HTTP 403 Forbidden. akakce-mcp routes requests through system <code>curl</code> with authentic browser and mobile headers to bypass TLS fingerprinting.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Do I need an Akakçe account or API key to search prices?</h3>
+          <p class="card-body">No. All product search, multi-seller comparison, and category browsing features work out-of-the-box with zero credentials and zero API keys.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">How do I extract my session token for price alerts?</h3>
+          <p class="card-body">You can run the interactive terminal login via <code>npx akakce-mcp auth</code>, extract the <code>AAATLGST</code> cookie from browser DevTools via <code>npx akakce-mcp set-cookie</code>, or set the <code>AKAKCE_COOKIE</code> environment variable.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">How does akakce-mcp compare to direct web scraping?</h3>
+          <p class="card-body">Direct web scraping is fragile, resource-heavy, and frequently triggers IP bans. akakce-mcp connects directly to the underlying <code>api6.akakce.com</code> JSON APIs, delivering fast, structured JSON data with zero browser overhead.</p>
+        </div>
       </div>
     </div>
   </section>

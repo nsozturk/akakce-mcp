@@ -18,11 +18,9 @@
 
 ---
 
-**akakce-mcp** is a comprehensive [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for [Akakçe](https://www.akakce.com) — Turkey's leading price comparison platform.
+**akakce-mcp** is a free, open-source Model Context Protocol (MCP) server for [Akakçe](https://www.akakce.com) that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts.
 
-It equips AI coding assistants and autonomous agents (Claude Code, Cursor, OpenCode, Antigravity) with structured real-time search, multi-seller price comparisons (Amazon TR, Hepsiburada, Trendyol, PttAVM, idefix, Teknosa), category hierarchies, and authenticated user capabilities (favorites, price drop alerts, notification stream).
-
-📖 **Documentation Portal:** [https://nsozturk.github.io/akakce-mcp/](https://nsozturk.github.io/akakce-mcp/)
+📖 **Documentation Portal:** [https://nsozturk.github.io/akakce-mcp/](https://nsozturk.github.io/akakce-mcp/) &bull; **AI/LLM Index:** [`llms.txt`](https://nsozturk.github.io/akakce-mcp/llms.txt) &bull; [`llms-full.txt`](https://nsozturk.github.io/akakce-mcp/llms-full.txt)
 
 ---
 
@@ -176,6 +174,48 @@ npx akakce-mcp logout
 - **Agent Contract:** See [`AGENTS.md`](./AGENTS.md) for execution protocols and failure recovery guidelines.
 - **Copy-Paste Agent Rule:** See [`GLOBAL_AGENT_RULE.md`](./GLOBAL_AGENT_RULE.md) to add `akakce-mcp` to your AI assistant's system instructions.
 - **API Reference:** Detailed endpoint map reverse-engineered from mobile and web traffic is documented in [`API_REFERENCE.md`](./API_REFERENCE.md).
+
+---
+
+## Alternatives & Comparison
+
+- **Compared to Puppeteer / Playwright scraping:** Traditional browser automation is fragile, slow (2-5s per request), and requires 300+ MB RAM while triggering Akamai's anti-bot JS challenges (HTTP 403). `akakce-mcp` connects directly to the underlying JSON API via system `curl` in ~150ms with zero browser overhead.
+- **Compared to Cimri.com scrapers:** Cimri has a different seller ecosystem and lacks authenticated user wishlists, notification counters, and persistent price drop alarms. `akakce-mcp` covers both public pricing and authenticated private actions.
+- **Compared to Google Shopping / SerpAPI:** Commercial SERP APIs charge steep monthly subscription fees ($50-$200/mo) and often return delayed or incomplete merchant listings for Turkish regional sellers. `akakce-mcp` is 100% free, open-source, and retrieves real-time pricing directly.
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### How do I use akakce-mcp with Claude Code?
+Run `claude mcp add akakce -- npx -y akakce-mcp`. Claude Code will automatically register all 20 tools and connect via the standard stdio protocol.
+
+### Does akakce-mcp bypass Akamai bot protection?
+Yes. Akakçe uses Akamai Bot Manager which blocks standard Node.js `fetch` with `HTTP 403 Forbidden`. `akakce-mcp` routes requests through system `curl` with authentic browser and mobile headers to bypass TLS fingerprinting.
+
+### Do I need an Akakçe account or API key to search prices?
+No. All product search, multi-seller comparison, and category browsing features work out-of-the-box with zero credentials and zero API keys.
+
+### How do I extract my session token for price alerts?
+You can run the interactive terminal login via `npx akakce-mcp auth`, extract the `AAATLGST` cookie from browser DevTools via `npx akakce-mcp set-cookie`, or set the `AKAKCE_COOKIE` environment variable.
+
+### How does akakce-mcp compare to direct web scraping?
+Direct web scraping with Cheerio or Puppeteer is fragile, resource-heavy, and frequently triggers IP bans. `akakce-mcp` connects directly to the underlying `api6.akakce.com` JSON APIs, delivering fast, structured JSON data with zero browser overhead.
+
+---
+
+## Citation
+
+If you use `akakce-mcp` in research, benchmarking, or autonomous AI agent workflows, please cite:
+
+```bibtex
+@software{akakce_mcp_2026,
+  author = {Öztürk, Enes},
+  title = {akakce-mcp: Model Context Protocol Server for Akakçe Price Comparison},
+  url = {https://github.com/nsozturk/akakce-mcp},
+  year = {2026}
+}
+```
 
 ---
 

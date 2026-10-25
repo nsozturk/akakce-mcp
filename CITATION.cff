@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software in research, benchmarking, or LLM agent evaluations, please cite it as below."
+title: "akakce-mcp: Model Context Protocol Server for Akakçe Price Comparison"
+authors:
+  - family-names: "Öztürk"
+    given-names: "Enes"
+    alias: "nsozturk"
+version: 1.0.0
+date-released: 2026-10-24
+license: MIT
+repository-code: "https://github.com/nsozturk/akakce-mcp"
+url: "https://nsozturk.github.io/akakce-mcp/"
+abstract: "akakce-mcp is a free, open-source Model Context Protocol (MCP) server for Akakçe that equips AI agents with real-time Turkish price comparison, multi-seller market intelligence, and automated price drop alerts."
+keywords:
+  - "model-context-protocol"
+  - "mcp"
+  - "akakce"
+  - "price-comparison"
+  - "ecommerce"
+  - "turkey"
+  - "ai-agent"
+  - "web-scraping"
